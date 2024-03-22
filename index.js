@@ -15,11 +15,13 @@ function runMemo(fn, args) {
     throw new Error("args must be an array");
   }
 
-  const argsSerialized = args.map((arg) => arg.toString()).join("");
-  const fnSerialized = fn.toString();
-  const key = `${fnSerialized}${argsSerialized}`;
+  const key = JSON.stringify({
+    fn: fn.toString(),
+    args: args.map((arg) => arg.toString()),
+  });
 
   const cacheHit = cache.get(key);
+
   if (cacheHit) {
     return cacheHit;
   }
