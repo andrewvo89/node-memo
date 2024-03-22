@@ -6,30 +6,32 @@ const cache = new Map();
  * @param {*} args
  * @return {*}
  */
-function runMemo(fn, args) {
-  if (typeof fn !== "function") {
-    throw new Error("fn must be a function");
-  }
+function runMemo(fn) {
+  return function (...args) {
+    if (typeof fn !== "function") {
+      throw new Error("fn must be a function");
+    }
 
-  if (!Array.isArray(args)) {
-    throw new Error("args must be an array");
-  }
+    if (!Array.isArray(args)) {
+      throw new Error("args must be an array");
+    }
 
-  const key = JSON.stringify({
-    fn: fn.toString(),
-    args: args.map((arg) => arg.toString()),
-  });
+    const key = JSON.stringify({
+      fn: fn.toString(),
+      args: args.map((arg) => arg.toString()),
+    });
 
-  const keyExists = cache.has(key);
+    const keyExists = cache.has(key);
 
-  if (keyExists) {
-    return cache.get(key);
-  }
+    if (keyExists) {
+      return cache.get(key);
+    }
 
-  const result = fn(...args);
-  cache.set(key, result);
+    const result = fn(...args);
+    cache.set(key, result);
 
-  return result;
+    return result;
+  };
 }
 
 /**
@@ -54,17 +56,17 @@ function run() {
 
   // runA: Cache miss
   console.time("runA");
-  const resultA = runMemo(expensiveFn, [initialValue]);
+  const resultA = runMemo(expensiveFn)(initialValue);
   console.timeEnd("runA");
 
   // runB: Cache hit
   console.time("runB");
-  const resultB = runMemo(expensiveFn, [initialValue]);
+  const resultB = runMemo(expensiveFn)(initialValue);
   console.timeEnd("runB");
 
   // runC: Change the initialValue to emulate a cache miss
   console.time("runC");
-  const resultC = runMemo(expensiveFn, [anotherInitialValue]);
+  const resultC = runMemo(expensiveFn)(anotherInitialValue);
   console.timeEnd("runC");
 
   console.log("resultA", resultA);
