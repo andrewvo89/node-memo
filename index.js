@@ -20,10 +20,10 @@ function runMemo(fn, args) {
     args: args.map((arg) => arg.toString()),
   });
 
-  const cacheHit = cache.get(key);
+  const keyExists = cache.has(key);
 
-  if (cacheHit) {
-    return cacheHit;
+  if (keyExists) {
+    return cache.get(key);
   }
 
   const result = fn(...args);
