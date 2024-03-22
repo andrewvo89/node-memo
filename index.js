@@ -4,14 +4,9 @@ const cache = new Map();
  * Runs an expensive function and memoizes the result based on the deps array.
  * @param {*} fn
  * @param {*} args
- * @param {*} deps
  * @return {*}
  */
-function runMemo(fn, args, deps) {
-  if (!Array.isArray(deps)) {
-    throw new Error("Key must be an array");
-  }
-
+function runMemo(fn, args) {
   if (typeof fn !== "function") {
     throw new Error("expensiveFn must be a function");
   }
@@ -20,10 +15,9 @@ function runMemo(fn, args, deps) {
     throw new Error("args must be an array");
   }
 
-  const key = deps
-    .map((dep) => dep.toString())
-    .sort()
-    .join("");
+  const argsSerialized = args.map((arg) => arg.toString()).join("");
+  const fnSerialized = fn.toString();
+  const key = `${fnSerialized}${argsSerialized}`;
 
   const cacheHit = cache.get(key);
   if (cacheHit) {
@@ -58,42 +52,21 @@ function run() {
 
   // runA: Cache miss
   console.time("runA");
-  const resultA = runMemo(
-    expensiveFn,
-    [initialValue],
-    [expensiveFn, initialValue]
-  );
+  const resultA = runMemo(expensiveFn, [initialValue]);
   console.timeEnd("runA");
 
   // runB: Cache hit
   console.time("runB");
-  const resultB = runMemo(
-    expensiveFn,
-    [initialValue],
-    [expensiveFn, initialValue]
-  );
+  const resultB = runMemo(expensiveFn, [initialValue]);
   console.timeEnd("runB");
-
-  // runC: Switch the order of the deps array and the result is the same as runB
-  console.time("runC");
-  const resultC = runMemo(
-    expensiveFn,
-    [initialValue],
-    [initialValue, expensiveFn]
-  );
-  console.timeEnd("runC");
 
   // runD: Change the initialValue to emulate a cache miss
   console.time("runD");
-  const resultD = runMemo(
-    expensiveFn,
-    [anotherInitialValue],
-    [expensiveFn, anotherInitialValue]
-  );
+  const resultD = runMemo(expensiveFn, [anotherInitialValue]);
   console.timeEnd("runD");
+
   console.log("resultA", resultA);
   console.log("resultB", resultB);
-  console.log("resultC", resultC);
   console.log("resultD", resultD);
 }
 
