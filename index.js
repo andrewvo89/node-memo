@@ -8,7 +8,7 @@ const cache = new Map();
  */
 function runMemo(fn, args) {
   if (typeof fn !== "function") {
-    throw new Error("expensiveFn must be a function");
+    throw new Error("fn must be a function");
   }
 
   if (!Array.isArray(args)) {
