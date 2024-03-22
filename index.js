@@ -62,14 +62,14 @@ function run() {
   const resultB = runMemo(expensiveFn, [initialValue]);
   console.timeEnd("runB");
 
-  // runD: Change the initialValue to emulate a cache miss
-  console.time("runD");
-  const resultD = runMemo(expensiveFn, [anotherInitialValue]);
-  console.timeEnd("runD");
+  // runC: Change the initialValue to emulate a cache miss
+  console.time("runC");
+  const resultC = runMemo(expensiveFn, [anotherInitialValue]);
+  console.timeEnd("runC");
 
   console.log("resultA", resultA);
   console.log("resultB", resultB);
-  console.log("resultD", resultD);
+  console.log("resultC", resultC);
 }
 
 run();
