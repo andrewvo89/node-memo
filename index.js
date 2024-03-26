@@ -1,5 +1,3 @@
-const cache = new Map();
-
 /**
  * Runs an expensive function and memoizes the result based on the deps array.
  * @param {*} fn
@@ -7,11 +5,13 @@ const cache = new Map();
  * @return {*}
  */
 function runMemo(fn) {
-  return function (...args) {
-    if (typeof fn !== "function") {
-      throw new Error("fn must be a function");
-    }
+  if (typeof fn !== "function") {
+    throw new Error("fn must be a function");
+  }
 
+  const cache = new Map();
+
+  return function (...args) {
     if (!Array.isArray(args)) {
       throw new Error("args must be an array");
     }
@@ -54,19 +54,21 @@ function run() {
   const initialValue = 11111;
   const anotherInitialValue = 22222;
 
+  const fnRunner = runMemo(expensiveFn);
+
   // runA: Cache miss
   console.time("runA");
-  const resultA = runMemo(expensiveFn)(initialValue);
+  const resultA = fnRunner(initialValue);
   console.timeEnd("runA");
 
   // runB: Cache hit
   console.time("runB");
-  const resultB = runMemo(expensiveFn)(initialValue);
+  const resultB = fnRunner(initialValue);
   console.timeEnd("runB");
 
   // runC: Change the initialValue to emulate a cache miss
   console.time("runC");
-  const resultC = runMemo(expensiveFn)(anotherInitialValue);
+  const resultC = fnRunner(anotherInitialValue);
   console.timeEnd("runC");
 
   console.log("resultA", resultA);
